@@ -1,0 +1,179 @@
+/* 会议条目整体样式 */
+#meeting-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    position: relative; /* Ensure relative positioning for absolute child elements */
+}
+
+/* 会议条目的整体容器（包含 startTime 和其余部分） */
+.meeting-wrapper {
+    display: flex;
+    width: 90%;
+    min-height: 10vh; /* 设置固定高度 */
+    margin: 1vh 0;  /* 调整间隙为 1vh */
+    background-color: white;
+}
+
+/* startTime 独立样式，占 10% 宽度，完全贴合左侧 */
+.start-time {
+    background-color: #236dd8;
+    color: white;
+    width: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5vw;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* 可修改的会议条目的内容，排除 startTime */
+.meeting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    width: 90%;
+    height: 10vh; /* 固定高度 */
+}
+
+/* info 部分样式，占 40% 宽度，文字居左，上下居中 */
+.info {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 2%;
+  
+    color: black;
+    position: relative;
+}
+
+/* info 部分的标题是黑色 */
+.title {
+    color: black;
+    font-size: 1.4vw;
+}
+
+/* info 部分的副标题是灰色 */
+.subtitle {
+    color: grey;
+    font-size: 1.1vw;
+}
+
+/* 添加竖线 */
+.info::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 15%;
+    width: 1px;
+    height: 70%;
+    background-color: #999;
+}
+
+/* room 部分样式，占 15%，文字居中 */
+.room {
+    width: 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    font-size: 1.4vw;
+}
+
+/* 添加竖线 */
+.room::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 15%;
+    width: 1px;
+    height: 70%;
+    background-color: #999;
+}
+
+
+/* floor 部分样式，占 15%，文字居中 */
+.floor {
+    width: 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    font-size: 1.4vw;
+}
+
+/* floor 部分的文字是灰色 */
+.floor-text {
+    color: grey;
+    font-size: 1.1vw;
+}
+
+/* 添加竖线 */
+.floor::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 15%;
+    width: 1px;
+    height: 70%;
+    background-color: #999;
+}
+
+/* status 部分样式，占 10%，图片或文字上下居中 */
+.status {
+    width: 10%;
+    display: flex;
+    flex-direction: column; /* 修改为上下排列 */
+    justify-content: center;
+    align-items: center;
+    font-size: 1.1vw;
+    color: grey;
+}
+
+/* status-symbol 样式，调整 emoji 大小并设置为黑色 */
+.status-symbol {
+    font-size: 1.5vw; /* 调整符号大小 */
+    color: black; /* 将符号颜色设为黑色 */
+    display: block; /* 确保符号是块级元素 */
+}
+
+/* 空白部分，占剩余的 10%，背景白色 */
+.blank {
+    width: 5%;
+    background-color: white;
+}
+
+/* 页码样式 */
+.page-number {
+    margin: 0 1vw;
+    padding: 1vw;
+    font-size: 1.5vw;
+    cursor: pointer;
+    color: black;
+}
+
+.page-number.selected {
+    background-color: #236dd8;
+    color: white;
+    border-radius: 50%;
+    padding: 0.5vw 1vw;
+}
+
+/* 页码容器，设置 absolute 但相对于 #meeting-container 定位 */
+#page-numbers {
+    position: absolute; /* Position absolutely within the meeting-container */
+    bottom: 35vh; /* Adjust this value to control the distance from the last meeting entry */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1px; /* 调整页码与会议条目之间的间隙 */
+}
