@@ -100,7 +100,7 @@ async function displayMeetings(data) {
                     </div>
                     <div class="floor">
                         <div class="room-text">Niveau 3</div>
-                        <div class="floor-text">Etage/Floor</div>
+                        <div class="floor-text">Étage/Floor</div>
                     </div>
                     <div class="status">
                         <div class="status-symbol">${statusSymbol}</div> <!-- 显示符号在上 -->
