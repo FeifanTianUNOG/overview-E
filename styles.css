@@ -11,7 +11,7 @@
 /* 会议条目的整体容器（包含 startTime 和其余部分） */
 .meeting-wrapper {
     display: flex;
-    width: 90%;
+    width: 100%;
     min-height: 10vh; /* 设置固定高度 */
     margin: 1vh 0;  /* 调整间隙为 1vh */
     background-color: white;
@@ -169,7 +169,7 @@
 /* 页码容器，设置 absolute 但相对于 #meeting-container 定位 */
 #page-numbers {
     position: absolute; /* Position absolutely within the meeting-container */
-    bottom: 35vh; /* Adjust this value to control the distance from the last meeting entry */
+    bottom: 30vh; /* Adjust this value to control the distance from the last meeting entry */
     left: 50%;
     transform: translateX(-50%);
     display: flex;
