@@ -169,7 +169,7 @@
 /* 页码容器，设置 absolute 但相对于 #meeting-container 定位 */
 #page-numbers {
     position: absolute; /* Position absolutely within the meeting-container */
-    bottom: 40vh; /* Adjust this value to control the distance from the last meeting entry */
+    bottom: 35vh; /* Adjust this value to control the distance from the last meeting entry */
     left: 50%;
     transform: translateX(-50%);
     display: flex;
