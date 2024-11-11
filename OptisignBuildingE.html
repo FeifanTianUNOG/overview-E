@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Display</title>
+    <style>
+        /* 会议条目整体样式 */
+        #meeting-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            position: relative;
+            background-color: rgba(255, 255, 255, 0); /* 完全透明 */
+        }
+
+        /* 会议条目的整体容器（包含 startTime 和其余部分） */
+        .meeting-wrapper {
+            display: flex;
+            width: 100%;
+            min-height: 10vh;
+            margin: 1vh 0;
+            background-color: white;
+        }
+
+        /* startTime 独立样式，占 10% 宽度，完全贴合左侧 */
+        .start-time {
+            background-color: #236dd8;
+            color: white;
+            width: 10%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5vw;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* 可修改的会议条目的内容，排除 startTime */
+        .meeting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            width: 90%;
+            height: 10vh;
+        }
+
+        /* info 部分样式，占 45% 宽度，文字居左，上下居中 */
+        .info {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start; /* 新增此行，确保文字左对齐 */
+            padding-left: 2%;
+            color: black;
+            position: relative;
+        }
+
+        /* info 部分的标题是黑色 */
+        .title {
+            color: black;
+            font-size: 1.4vw;
+        }
+
+        /* info 部分的副标题是灰色 */
+        .subtitle {
+            color: grey;
+            font-size: 1.1vw;
+        }
+
+        /* 添加竖线 */
+        .info::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 15%;
+            width: 1px;
+            height: 70%;
+            background-color: #999;
+        }
+
+        /* room 部分样式，占 15%，文字居中 */
+        .room {
+            width: 15%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-right: 2%;
+            text-align: center;
+            position: relative;
+            font-size: 1.4vw;
+        }
+
+        /* 添加竖线 */
+        .room::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 15%;
+            width: 1px;
+            height: 70%;
+            background-color: #999;
+        }
+
+        /* floor 部分样式，占 15%，文字居中 */
+        .floor {
+            width: 15%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-right: 2%;
+            text-align: center;
+            position: relative;
+            font-size: 1.4vw;
+        }
+
+        /* floor 部分的文字是灰色 */
+        .floor-text {
+            color: grey;
+            font-size: 1.1vw;
+        }
+
+        /* 添加竖线 */
+        .floor::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 15%;
+            width: 1px;
+            height: 70%;
+            background-color: #999;
+        }
+
+        /* status 部分样式，占 10%，图片或文字上下居中 */
+        .status {
+            width: 10%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-right: 2%;
+            align-items: center;
+            font-size: 1.1vw;
+            color: grey;
+        }
+
+        /* status-symbol 样式，调整 emoji 大小并设置为黑色 */
+        .status-symbol {
+            font-size: 1.5vw;
+            color: black;
+            display: block;
+        }
+
+        /* 空白部分，占剩余的 10%，背景白色 */
+        .blank {
+            width: 5%;
+            background-color: white;
+        }
+
+        /* 页码样式 */
+        .page-number {
+            margin: 0 1vw;
+            padding: 1vw;
+            font-size: 1.5vw;
+            cursor: pointer;
+            color: black;
+        }
+
+        .page-number.selected {
+            background-color: #236dd8;
+            color: white;
+            border-radius: 50%;
+            padding: 0.5vw 1vw;
+        }
+
+        /* 页码容器，设置 absolute 但相对于 #meeting-container 定位 */
+        #page-numbers {
+            position: absolute;
+            bottom: 35vh;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="meeting-wrapper">
+    <div id="meeting-container"></div>
+    <div id="page-numbers"></div>
+</div>
+
+<script>
+    const jsonDataUrl = 'https://feifantianunog.github.io/meetingJSONdata/input.json';
+    const itemsPerPage = 5;
+    let currentPage = 1;
+
+    function getBuilding(room) {
+        if (['XXVII', 'XXIV', 'XXIII', 'XXV', 'XXII', 'XVII', 'XIX', 'E.3023 (Jura)'].includes(room)) {
+            return 'E';
+        } else if (['IX', 'III', 'VIII'].includes(room)) {
+            return 'A';
+        } else if (room === 'Tempus') {
+            return 'Tempus Pavilion';
+        } else if (['PW1', 'PWG'].includes(room)) {
+            return 'Palais Wilson';
+        } else {
+            return 'Unknown';
+        }
+    }
+
+    function formatTime(timeStr) {
+        return timeStr.slice(0, 5);
+    }
+
+    async function fetchMeetingData() {
+        try {
+            const response = await fetch(jsonDataUrl);
+            const data = await response.json();
+            console.log("Fetched Data:", data);
+
+            const filteredData = data.filter(item => {
+                const building = getBuilding(item.room);
+                if (building !== 'E') return false;
+
+            //     const now = new Date();
+            //     const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            //     return item.endTime > currentTime;
+            // });
+            return item.endTime > '10:00:00';
+        });
+
+            console.log("Filtered Data:", filteredData);
+            return filteredData.sort((a, b) => a.startTime.localeCompare(b.startTime));
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    async function displayMeetings(meetings) {
+        const meetingContainer = document.getElementById('meeting-container');
+        meetingContainer.style.opacity = 0;
+        meetingContainer.innerHTML = '';
+
+        meetings.forEach(item => {
+            const statusSymbol = item.closed === 'Y' ? '🔒' : '✔️';
+            const statusText = item.closed === 'Y' ? 'Private' : 'Public';
+
+            const meetingItem = `
+                <div class="meeting-wrapper">
+                    <div class="start-time">${formatTime(item.startTime)}</div>
+                    <div class="meeting-item">
+                        <div class="info">
+                            <div class="title" data-organ="${item.organAcronym}" data-french="${item.frenchOrganAcronym}">${item.organAcronym}</div>
+                            <div class="subtitle" data-shorttitle="${item.shortTitle}" data-frenchshorttitle="${item.frenchShortTitle}">${item.shortTitle}</div>
+                        </div>
+                        <div class="room">
+                            <div class="room-text">${item.room}</div>
+                            <div class="floor-text">Salle/Room</div>
+                        </div>
+                        <div class="floor">
+                            <div class="room-text">Niveau 3</div>
+                            <div class="floor-text">Etage/Floor</div>
+                        </div>
+                        <div class="status">
+                            <div class="status-symbol">${statusSymbol}</div>
+                            <div class="status-text">${statusText}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            meetingContainer.insertAdjacentHTML('beforeend', meetingItem);
+        });
+
+        setTimeout(() => {
+            meetingContainer.style.opacity = 1;
+        }, 50);
+    }
+
+    function paginate(meetings) {
+        const totalPages = Math.ceil(meetings.length / itemsPerPage);
+
+        function updatePagination() {
+            const pageNumbers = document.getElementById('page-numbers');
+            pageNumbers.innerHTML = '';
+
+            if (totalPages <= 1) {
+                pageNumbers.style.display = 'none';
+                return;
+            } else {
+                pageNumbers.style.display = 'flex';
+            }
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('span');
+                pageButton.textContent = i;
+                pageButton.classList.add('page-number');
+                if (i === currentPage) {
+                    pageButton.classList.add('selected');
+                }
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    renderPage();
+                });
+                pageNumbers.appendChild(pageButton);
+            }
+        }
+
+        function renderPage() {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedItems = meetings.slice(start, end);
+            displayMeetings(paginatedItems);
+            updatePagination();
+        }
+
+        renderPage();
+
+        setInterval(() => {
+            currentPage = currentPage < totalPages ? currentPage + 1 : 1;
+            renderPage();
+        }, 10000);
+    }
+
+    fetchMeetingData().then(data => {
+        if (data && data.length > 0) {
+            paginate(data);
+        } else {
+            console.log("No data to display after filtering.");
+        }
+    });
+</script>
+</body>
+</html>
